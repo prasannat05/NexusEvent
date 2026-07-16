@@ -3,67 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusEvent | Enterprise Management Architecture</title>
+    <title>NexusCampus | College Event Management System</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="app-container">
+        <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="brand">
-                <span class="logo-text">NexusEvent</span>
+                <span class="logo-text">NexusCampus</span>
             </div>
 
+            <!-- Portal View Switcher -->
             <div class="role-selector-box">
-                <label for="role-select">Access Context</label>
+                <label for="role-select">Portal View</label>
                 <select id="role-select">
-                    <option value="participant">Participant Mode</option>
-                    <option value="organizer">Organizer Console</option>
-                    <option value="admin">System Administrator</option>
+                    <option value="participant">Student Portal</option>
+                    <option value="organizer">Club Organizer Console</option>
+                    <option value="admin">Campus Administrator</option>
                 </select>
             </div>
 
+            <!-- Dynamic Navigation Links -->
             <nav id="dynamic-nav">
-                </nav>
+                <!-- Injected via JavaScript based on chosen role -->
+            </nav>
         </aside>
 
+        <!-- Main Workspace -->
         <main class="main-content">
             
+            <!-- VIEW: Explore Events -->
             <section id="view-explore" class="view-section hidden">
                 <div class="view-header">
                     <div>
-                        <h2>Live Registry</h2>
-                        <p class="view-subtitle">Browse and secure access to global operations.</p>
+                        <h2>Campus Event Bulletin</h2>
+                        <p class="view-subtitle">Discover and RSVP to upcoming club events, fests, and technical symposia.</p>
                     </div>
-                    <input type="text" id="search-bar" placeholder="Search by title or venue...">
+                    <input type="text" id="search-bar" placeholder="Search events, clubs, or venues...">
                 </div>
                 <div id="explore-grid" class="cards-grid"></div>
             </section>
 
+            <!-- VIEW: Participant Tickets -->
             <section id="view-tickets" class="view-section hidden">
                 <div class="view-header">
                     <div>
-                        <h2>Access Credentials</h2>
-                        <p class="view-subtitle">Active entry keys and registration records.</p>
+                        <h2>My Event Passes</h2>
+                        <p class="view-subtitle">Your active gate passes and registration records.</p>
                     </div>
                 </div>
                 <div id="tickets-grid" class="cards-grid"></div>
             </section>
 
+            <!-- VIEW: Organizer Dashboard / Create Event -->
             <section id="view-organizer" class="view-section hidden">
                 <div class="view-header">
                     <div>
-                        <h2>Organizer Management Desk</h2>
-                        <p class="view-subtitle">Provision configurations and monitor active records.</p>
+                        <h2>Club Representative Control Panel</h2>
+                        <p class="view-subtitle">Create new campus events and manage student rosters.</p>
                     </div>
                 </div>
                 
                 <div class="organizer-workspace">
                     <form id="create-event-form" class="custom-form">
-                        <h3>Provision Event</h3>
+                        <h3>Host New Event</h3>
                         <div class="form-group">
                             <label>Event Title</label>
-                            <input type="text" id="ev-title" required placeholder="e.g., Enterprise Architecture Forum">
+                            <input type="text" id="ev-title" required placeholder="e.g., National Hackathon 2026 / Culturals">
                         </div>
                         <div class="form-row">
                             <div class="form-group">
@@ -71,51 +79,52 @@
                                 <input type="datetime-local" id="ev-date" required>
                             </div>
                             <div class="form-group">
-                                <label>Maximum Capacity</label>
-                                <input type="number" id="ev-capacity" min="1" required placeholder="150">
+                                <label>Registration Limit</label>
+                                <input type="number" id="ev-capacity" min="1" required placeholder="e.g., 150 students">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Venue / Secure Streaming Endpoint</label>
-                            <input type="text" id="ev-location" required placeholder="e.g., Summit Hall A or HTTPS Endpoint">
+                            <label>Venue / Lab Room / Seminar Hall</label>
+                            <input type="text" id="ev-location" required placeholder="e.g., Main Auditorium, Mech Lab 3">
                         </div>
-                        <button type="submit" class="btn btn-primary">Publish Architecture</button>
+                        <button type="submit" class="btn btn-primary">Publish to Bulletin</button>
                     </form>
 
                     <div class="organizer-management">
-                        <h3>Managed Directory</h3>
+                        <h3>Your Club's Events</h3>
                         <div id="organizer-events-list" class="list-container"></div>
                     </div>
                 </div>
             </section>
 
+            <!-- VIEW: Admin Global Panel -->
             <section id="view-admin" class="view-section hidden">
                 <div class="view-header">
                     <div>
-                        <h2>Administrative Control Panel</h2>
-                        <p class="view-subtitle">Global system overview and analytical registry metrics.</p>
+                        <h2>Dean / Admin Master Panel</h2>
+                        <p class="view-subtitle">Global oversight of all departmental and club activities.</p>
                     </div>
                 </div>
                 <div class="metrics-row">
                     <div class="metric-card">
-                        <h4>Global Event Instances</h4>
+                        <h4>Active Event Approvals</h4>
                         <p id="admin-total-events">0</p>
                     </div>
                     <div class="metric-card">
-                        <h4>Aggregated User Records</h4>
+                        <h4>Total Student RSVPs</h4>
                         <p id="admin-total-registrations">0</p>
                     </div>
                 </div>
                 <div class="admin-table-wrapper">
-                    <h3>Master Directory Control</h3>
+                    <h3>Master College Event Directory</h3>
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th>Event Entity</th>
-                                <th>Timestamp</th>
-                                <th>Deployment Target</th>
-                                <th>Capacity Utilization</th>
-                                <th>Operations</th>
+                                <th>Event / Fest Name</th>
+                                <th>Date</th>
+                                <th>Allotted Venue</th>
+                                <th>Registrations</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="admin-master-tbody"></tbody>
