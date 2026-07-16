@@ -1,0 +1,367 @@
+:root {
+    --bg-main: #0b0f17;
+    --bg-sidebar: #111823;
+    --bg-surface: #1e293b;
+    --bg-surface-hover: #334155;
+    
+    --text-primary: #f8fafc;
+    --text-muted: #64748b;
+    
+    --accent: #4f46e5;
+    --accent-hover: #3730a3;
+    --accent-success: #059669;
+    --accent-danger: #dc2626;
+    
+    --border-color: #1e293b;
+    --radius-lg: 8px;
+    --radius-md: 4px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: -0.01em;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar Branding & Utilities */
+.sidebar {
+    width: 280px;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    padding: 2.5rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.logo-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+}
+
+.role-selector-box {
+    background-color: var(--bg-main);
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.role-selector-box label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.role-selector-box select {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+}
+
+nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    transition: all 0.15s ease;
+}
+
+.nav-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--border-color);
+}
+
+.nav-btn.active {
+    background-color: var(--accent);
+    color: var(--text-primary);
+}
+
+/* Dynamic Panel Workspace */
+.main-content {
+    flex: 1;
+    padding: 3rem;
+    overflow-y: auto;
+}
+
+.view-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+}
+
+.view-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.view-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+#search-bar {
+    width: 300px;
+    padding: 0.65rem 0.85rem;
+    background-color: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    outline: none;
+}
+
+#search-bar:focus {
+    border-color: var(--accent);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Data Interface Components */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.ui-card {
+    background-color: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+.ui-card-badge {
+    position: absolute;
+    top: 1.75rem;
+    right: 1.75rem;
+    border: 1px solid var(--accent-success);
+    color: var(--accent-success);
+    padding: 0.15rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 2px;
+}
+
+.ui-card h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-right: 4.5rem;
+}
+
+.ui-card-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.capacity-tracker {
+    margin: 1.5rem 0;
+}
+
+.capacity-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+    height: 4px;
+    background-color: var(--bg-main);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--accent);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* Corporate Buttons Core */
+.btn {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.1s ease;
+    text-align: center;
+}
+
+.btn-primary { background-color: var(--accent); color: white; }
+.btn-primary:hover { background-color: var(--accent-hover); }
+.btn-primary:disabled { background-color: var(--bg-main); color: var(--text-muted); cursor: not-allowed; border: 1px solid var(--border-color); }
+
+.btn-danger { background-color: transparent; color: var(--accent-danger); border: 1px solid rgba(220, 38, 38, 0.3); }
+.btn-danger:hover { background-color: var(--accent-danger); color: white; }
+
+/* Dashboard Workspace Core Split */
+.organizer-workspace {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+
+@media (max-width: 950px) {
+    .organizer-workspace { grid-template-columns: 1fr; }
+}
+
+.custom-form {
+    background-color: var(--bg-sidebar);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.custom-form h3 { font-size: 1.1rem; font-weight: 600; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.form-row .form-group { flex: 1; }
+
+.form-group label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.form-group input {
+    padding: 0.65rem;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: white;
+    outline: none;
+    font-size: 0.9rem;
+}
+
+.form-group input:focus { border-color: var(--accent); }
+
+.list-container {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.item-row {
+    background-color: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Administration Interface Matrix */
+.metrics-row {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.metric-card {
+    flex: 1;
+    background-color: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    padding: 1.75rem;
+    border-radius: var(--radius-lg);
+}
+
+.metric-card h4 { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 600; margin-bottom: 0.5rem; }
+.metric-card p { font-size: 2.25rem; font-weight: 600; color: var(--text-primary); }
+
+.admin-table-wrapper {
+    background-color: var(--bg-sidebar);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    overflow-x: auto;
+}
+
+.admin-table-wrapper h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-table th, .admin-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.875rem;
+}
+
+.admin-table th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; }
