@@ -1,4 +1,15 @@
-// Global Normalized State Base
+// ══════════════════════════════════════════════════════════════════════════
+// DEMO CREDENTIALS
+// ══════════════════════════════════════════════════════════════════════════
+const CREDENTIALS = {
+    participant: { username: 'student', password: 'student123', displayName: 'Alex Student' },
+    organizer:   { username: 'organizer', password: 'organizer123', displayName: 'Sam Organizer' },
+    admin:       { username: 'admin', password: 'admin123', displayName: 'Dr. Admin' }
+};
+
+// ══════════════════════════════════════════════════════════════════════════
+// GLOBAL STATE
+// ══════════════════════════════════════════════════════════════════════════
 const defaultEvents = [
     { id: "1", title: "Inter-College Tech Symposium", date: "2026-08-15T09:00", location: "Main Seminar Hall", maxCapacity: 150, attendees: [] },
     { id: "2", title: "Battle of the Bands - Cultural Fest", date: "2026-09-02T17:00", location: "Open Air Theatre (OAT)", maxCapacity: 500, attendees: [] }
@@ -6,6 +17,9 @@ const defaultEvents = [
 
 let state = {
     currentRole: 'participant',
+    loggedIn: false,
+    loggedInRole: null,
+    loggedInUser: null,
     events: JSON.parse(localStorage.getItem('ev_data')) || defaultEvents,
     myTickets: JSON.parse(localStorage.getItem('ev_tickets')) || []
 };
@@ -15,18 +29,150 @@ function saveToStorage() {
     localStorage.setItem('ev_tickets', JSON.stringify(state.myTickets));
 }
 
-// Master Initialization Hook
-document.addEventListener('DOMContentLoaded', () => {
-    initRoleSelector();
+// ══════════════════════════════════════════════════════════════════════════
+// LOGIN / LOGOUT
+// ══════════════════════════════════════════════════════════════════════════
+window.handleLogin = function(e, role) {
+    e.preventDefault();
+
+    const usernameEl = document.getElementById(`login-user-${role}`);
+    const passwordEl = document.getElementById(`login-pass-${role}`);
+    const errorEl = document.getElementById(`login-error-${role}`);
+
+    if (!usernameEl || !passwordEl) return false;
+
+    const username = usernameEl.value.trim();
+    const password = passwordEl.value.trim();
+    const creds = CREDENTIALS[role];
+
+    // Clear previous errors
+    document.querySelectorAll('.login-error').forEach(el => el.textContent = '');
+
+    if (username === creds.username && password === creds.password) {
+        state.loggedIn = true;
+        state.loggedInRole = role;
+        state.currentRole = role;
+        state.loggedInUser = creds.displayName;
+
+        sessionStorage.setItem('loggedInRole', role);
+        sessionStorage.setItem('loggedInUser', creds.displayName);
+
+        showApp();
+    } else {
+        if (errorEl) {
+            errorEl.textContent = 'Invalid username or password';
+        }
+    }
+
+    return false;
+};
+
+window.handleLogout = function() {
+    state.loggedIn = false;
+    state.loggedInRole = null;
+    state.loggedInUser = null;
+
+    sessionStorage.removeItem('loggedInRole');
+    sessionStorage.removeItem('loggedInUser');
+
+    hideApp();
+};
+
+function showApp() {
+    const loginScreen = document.getElementById('login-screen');
+    const appContainer = document.getElementById('app-container');
+
+    if (loginScreen) loginScreen.classList.add('hidden');
+    if (appContainer) {
+        appContainer.classList.remove('hidden');
+        // Re-trigger entrance animation
+        appContainer.style.animation = 'none';
+        appContainer.offsetHeight; // force reflow
+        appContainer.style.animation = '';
+    }
+
+    // Set role selector to match login role
+    const roleSelect = document.getElementById('role-select');
+    if (roleSelect) {
+        roleSelect.value = state.currentRole;
+    }
+
+    updateUserBadge();
     setupNavigation(state.currentRole);
     initForms();
     initSearch();
+}
+
+function hideApp() {
+    const loginScreen = document.getElementById('login-screen');
+    const appContainer = document.getElementById('app-container');
+
+    if (appContainer) appContainer.classList.add('hidden');
+    if (loginScreen) {
+        loginScreen.classList.remove('hidden');
+        // Re-trigger entrance animations
+        loginScreen.style.animation = 'none';
+        loginScreen.offsetHeight;
+        loginScreen.style.animation = '';
+    }
+
+    // Clear error messages
+    document.querySelectorAll('.login-error').forEach(el => el.textContent = '');
+}
+
+function updateUserBadge() {
+    const badge = document.getElementById('user-info-badge');
+    if (!badge) return;
+
+    const roleLabels = {
+        participant: 'Student',
+        organizer: 'Club Organizer',
+        admin: 'Campus Admin'
+    };
+
+    const avatarEmojis = {
+        participant: '🎓',
+        organizer: '🎪',
+        admin: '🛡️'
+    };
+
+    const role = state.loggedInRole || 'participant';
+
+    badge.innerHTML = `
+        <div class="user-avatar ${role}">${avatarEmojis[role]}</div>
+        <div class="user-info-text">
+            <span class="user-info-name">${state.loggedInUser || 'Guest'}</span>
+            <span class="user-info-role">${roleLabels[role] || 'Student'}</span>
+        </div>
+    `;
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// MASTER INITIALIZATION
+// ══════════════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+    // Check for existing session
+    const savedRole = sessionStorage.getItem('loggedInRole');
+    const savedUser = sessionStorage.getItem('loggedInUser');
+
+    if (savedRole && savedUser) {
+        state.loggedIn = true;
+        state.loggedInRole = savedRole;
+        state.currentRole = savedRole;
+        state.loggedInUser = savedUser;
+        showApp();
+    } else {
+        hideApp();
+    }
 });
 
+// ══════════════════════════════════════════════════════════════════════════
+// ROLE SELECTOR & NAVIGATION
+// ══════════════════════════════════════════════════════════════════════════
 function initRoleSelector() {
     const selector = document.getElementById('role-select');
     if (!selector) return;
-    
+
     selector.value = state.currentRole;
     selector.addEventListener('change', (e) => {
         state.currentRole = e.target.value;
@@ -37,19 +183,19 @@ function initRoleSelector() {
 function setupNavigation(role) {
     const navContainer = document.getElementById('dynamic-nav');
     if (!navContainer) return;
-    
+
     const links = {
         participant: [
-            { target: 'view-explore', label: 'Browse Registry' },
-            { target: 'view-tickets', label: 'Access Credentials' }
+            { target: 'view-explore', label: '🔍  Browse Registry' },
+            { target: 'view-tickets', label: '🎫  Access Credentials' }
         ],
         organizer: [
-            { target: 'view-organizer', label: 'Management Desk' },
-            { target: 'view-explore', label: 'Global Registry Preview' }
+            { target: 'view-organizer', label: '📋  Management Desk' },
+            { target: 'view-explore', label: '🔍  Global Registry Preview' }
         ],
         admin: [
-            { target: 'view-admin', label: 'System Master View' },
-            { target: 'view-explore', label: 'Global Registry Feed' }
+            { target: 'view-admin', label: '📊  System Master View' },
+            { target: 'view-explore', label: '🔍  Global Registry Feed' }
         ]
     };
 
@@ -67,17 +213,26 @@ function setupNavigation(role) {
         });
     });
 
+    // Also re-init the role selector each time
+    initRoleSelector();
+
     switchView(links[role][0].target);
 }
 
 function switchView(targetId) {
     document.querySelectorAll('.view-section').forEach(section => section.classList.add('hidden'));
     const targeted = document.getElementById(targetId);
-    if (targeted) targeted.classList.remove('hidden');
-    
+    if (targeted) {
+        targeted.classList.remove('hidden');
+        // Re-trigger entrance animation
+        targeted.style.animation = 'none';
+        targeted.offsetHeight;
+        targeted.style.animation = '';
+    }
+
     const searchBar = document.getElementById('search-bar');
     if (searchBar) searchBar.value = '';
-    
+
     renderViews();
 }
 
@@ -108,7 +263,7 @@ function renderExploreView(eventsToRender) {
         const isFull = booked >= event.maxCapacity;
 
         let actionBtn = `<button class="btn btn-primary" onclick="registerEvent('${event.id}')">Request Registration</button>`;
-        if (isRegistered) actionBtn = `<button class="btn btn-primary" disabled>Confirmed</button>`;
+        if (isRegistered) actionBtn = `<button class="btn btn-primary" disabled>✓ Confirmed</button>`;
         else if (isFull) actionBtn = `<button class="btn btn-danger" disabled>Capacity Exhausted</button>`;
 
         const card = document.createElement('div');
@@ -117,8 +272,8 @@ function renderExploreView(eventsToRender) {
         card.innerHTML = `
             <div>
                 <h3>${event.title}</h3>
-                <div class="ui-card-meta">Timing: ${new Date(event.date).toLocaleString()}</div>
-                <div class="ui-card-meta">Location: ${event.location}</div>
+                <div class="ui-card-meta">📅  ${new Date(event.date).toLocaleString()}</div>
+                <div class="ui-card-meta">📍  ${event.location}</div>
                 <div class="capacity-tracker">
                     <div class="capacity-text">
                         <span>Roster Capacity</span>
@@ -159,12 +314,12 @@ function renderTicketsView() {
         const card = document.createElement('div');
         card.className = 'ui-card';
         card.innerHTML = `
-            <span class="ui-card-badge">Confirmed RSVP</span>
+            <span class="ui-card-badge">✓ Confirmed RSVP</span>
             <div>
                 <h3>${event.title}</h3>
-                <div class="ui-card-meta">Timing: ${new Date(event.date).toLocaleString()}</div>
-                <div class="ui-card-meta">Location: ${event.location}</div>
-                <p style="margin-top:1.5rem; font-size: 0.75rem; font-family: monospace; color: var(--text-dimmed)">STUDENT PASS ID: CAMPUS-${event.id}-ID</p>
+                <div class="ui-card-meta">📅  ${new Date(event.date).toLocaleString()}</div>
+                <div class="ui-card-meta">📍  ${event.location}</div>
+                <p style="margin-top:1.5rem; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--text-dimmed)">STUDENT PASS ID: CAMPUS-${event.id}-ID</p>
             </div>
             <button class="btn btn-danger" style="margin-top:1.5rem;" onclick="cancelTicket('${event.id}')">Cancel RSVP</button>
         `;
@@ -189,7 +344,11 @@ function initForms() {
     const form = document.getElementById('create-event-form');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    // Remove old listener by cloning
+    const newForm = form.cloneNode(true);
+    form.parentNode.replaceChild(newForm, form);
+
+    newForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
         const newEvent = {
@@ -203,7 +362,7 @@ function initForms() {
 
         state.events.push(newEvent);
         saveToStorage();
-        form.reset();
+        newForm.reset();
         renderViews();
     });
 }
@@ -223,10 +382,10 @@ function renderOrganizerView() {
         row.className = 'item-row';
         row.innerHTML = `
             <div>
-                <strong style="font-size: 0.9rem; font-weight: 500; color: var(--text-intense);">${event.title}</strong>
-                <div style="font-size:0.8rem; color:var(--text-dimmed); margin-top: 0.15rem;">Allocated: ${event.attendees.length}</div>
+                <strong style="font-size: 0.9rem; font-weight: 600; color: var(--text-intense);">${event.title}</strong>
+                <div style="font-size:0.8rem; color:var(--text-dimmed); margin-top: 0.15rem;">👥 Allocated: ${event.attendees.length}</div>
             </div>
-            <button class="btn btn-danger" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;" onclick="deleteEvent('${event.id}')">Deprovision</button>
+            <button class="btn btn-danger" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;" onclick="deleteEvent('${event.id}')">Remove</button>
         `;
         container.appendChild(row);
     });
@@ -264,20 +423,24 @@ function renderAdminView() {
             <td>${new Date(event.date).toLocaleDateString()}</td>
             <td>${event.location}</td>
             <td>${event.attendees.length} / ${event.maxCapacity}</td>
-            <td><button class="btn btn-danger" style="padding:0.35rem 0.75rem; font-size:0.8rem;" onclick="deleteEvent('${event.id}')">Terminate Instance</button></td>
+            <td><button class="btn btn-danger" style="padding:0.35rem 0.75rem; font-size:0.8rem;" onclick="deleteEvent('${event.id}')">Terminate</button></td>
         `;
         tbody.appendChild(tr);
     });
 }
 
 /* ==========================================================================
-   🔍 STABLE SEARCH ENTRY MATCHING ARCHITECTURE
+   🔍 SEARCH
    ========================================================================== */
 function initSearch() {
     const bar = document.getElementById('search-bar');
     if (!bar) return;
 
-    bar.addEventListener('input', (e) => {
+    // Remove old listeners by cloning
+    const newBar = bar.cloneNode(true);
+    bar.parentNode.replaceChild(newBar, bar);
+
+    newBar.addEventListener('input', (e) => {
         const text = e.target.value.toLowerCase();
         
         const filteredEvents = state.events.filter(event => 

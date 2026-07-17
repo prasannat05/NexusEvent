@@ -3,16 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NexusCampus — A modern college event management system for students, club organizers, and campus administrators.">
     <title>NexusCampus | College Event Management System</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="app-container">
+    <!-- ═══════════════════════════════════════════════════════════════════
+         LOGIN SCREEN
+         ═══════════════════════════════════════════════════════════════════ -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-brand">
+            <h1>NexusCampus</h1>
+            <p>Choose your portal to continue</p>
+        </div>
+
+        <div class="login-cards-row">
+            <!-- Student Login -->
+            <div class="login-card" data-role="participant">
+                <div class="login-card-icon student">🎓</div>
+                <h3>Student Portal</h3>
+                <p class="login-subtitle">Browse events, RSVP, and manage your passes</p>
+                <form class="login-form" onsubmit="return handleLogin(event, 'participant')">
+                    <input type="text" class="login-input" id="login-user-participant" placeholder="Username" value="student" autocomplete="off">
+                    <input type="password" class="login-input" id="login-pass-participant" placeholder="Password" value="student123">
+                    <button type="submit" class="login-btn">Sign In as Student</button>
+                    <p class="login-error" id="login-error-participant"></p>
+                </form>
+                <p class="login-hint">Demo: student / student123</p>
+            </div>
+
+            <!-- Organizer Login -->
+            <div class="login-card" data-role="organizer">
+                <div class="login-card-icon organizer">🎪</div>
+                <h3>Club Organizer</h3>
+                <p class="login-subtitle">Create events and manage student rosters</p>
+                <form class="login-form" onsubmit="return handleLogin(event, 'organizer')">
+                    <input type="text" class="login-input" id="login-user-organizer" placeholder="Username" value="organizer" autocomplete="off">
+                    <input type="password" class="login-input" id="login-pass-organizer" placeholder="Password" value="organizer123">
+                    <button type="submit" class="login-btn">Sign In as Organizer</button>
+                    <p class="login-error" id="login-error-organizer"></p>
+                </form>
+                <p class="login-hint">Demo: organizer / organizer123</p>
+            </div>
+
+            <!-- Admin Login -->
+            <div class="login-card" data-role="admin">
+                <div class="login-card-icon admin">🛡️</div>
+                <h3>Campus Admin</h3>
+                <p class="login-subtitle">Full oversight of all campus activities</p>
+                <form class="login-form" onsubmit="return handleLogin(event, 'admin')">
+                    <input type="text" class="login-input" id="login-user-admin" placeholder="Username" value="admin" autocomplete="off">
+                    <input type="password" class="login-input" id="login-pass-admin" placeholder="Password" value="admin123">
+                    <button type="submit" class="login-btn">Sign In as Admin</button>
+                    <p class="login-error" id="login-error-admin"></p>
+                </form>
+                <p class="login-hint">Demo: admin / admin123</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         MAIN APPLICATION (hidden until login)
+         ═══════════════════════════════════════════════════════════════════ -->
+    <div class="app-container hidden" id="app-container">
+
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="brand">
+                <div class="brand-icon">N</div>
                 <span class="logo-text">NexusCampus</span>
+            </div>
+
+            <!-- Logged-in User Badge -->
+            <div id="user-info-badge" class="user-info-badge">
+                <!-- Injected via JS -->
             </div>
 
             <!-- Portal View Switcher -->
@@ -29,6 +94,11 @@
             <nav id="dynamic-nav">
                 <!-- Injected via JavaScript based on chosen role -->
             </nav>
+
+            <!-- Logout Button -->
+            <button class="logout-btn" id="logout-btn" onclick="handleLogout()">
+                ← Sign Out
+            </button>
         </aside>
 
         <!-- Main Workspace -->
