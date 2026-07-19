@@ -1,6 +1,6 @@
 # NexusEvent
-
-A modern, full-stack event management platform designed for campus communities to create, discover, and register for events with intuitive user interface and role-based access control.
+( https://nexuscampus-pras.web.app/login )
+- A modern, full-stack event management platform designed for campus communities to create, discover, and register for events with intuitive user interface and role-based access control.
 
 ## Table of Contents
 
