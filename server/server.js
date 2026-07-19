@@ -14,7 +14,15 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: [
+        'https://nexuscampus-pras.web.app',
+        'https://nexuscampus-pras.firebaseapp.com',
+        'http://localhost:5173',
+        'http://localhost:5174'
+    ],
+    credentials: true
+}));
 app.use(express.json());
 
 // Routes
@@ -28,6 +36,6 @@ app.get('/api/health', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`🚀 NexusCampus API running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 NexusCampus API running on http://0.0.0.0:${PORT}`);
 });
