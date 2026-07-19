@@ -66,8 +66,8 @@ export default function ExplorePage() {
                             <div className="ui-card" key={event._id}>
                                 <div>
                                     <h3>{event.title}</h3>
-                                    <div className="ui-card-meta">📅 {new Date(event.date).toLocaleString()}</div>
-                                    <div className="ui-card-meta">📍 {event.location}</div>
+                                    <div className="ui-card-meta">{new Date(event.date).toLocaleString()}</div>
+                                    <div className="ui-card-meta">{event.location}</div>
                                     <div className="capacity-tracker">
                                         <div className="capacity-text">
                                             <span>Roster Capacity</span>

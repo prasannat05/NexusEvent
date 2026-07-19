@@ -46,11 +46,11 @@ export default function TicketsPage() {
                         if (!event) return null;
                         return (
                             <div className="ui-card" key={ticket._id}>
-                                <span className="ui-card-badge">✓ Confirmed RSVP</span>
+                                <span className="ui-card-badge">Confirmed</span>
                                 <div>
                                     <h3>{event.title}</h3>
-                                    <div className="ui-card-meta">📅 {new Date(event.date).toLocaleString()}</div>
-                                    <div className="ui-card-meta">📍 {event.location}</div>
+                                    <div className="ui-card-meta">{new Date(event.date).toLocaleString()}</div>
+                                    <div className="ui-card-meta">{event.location}</div>
                                     <p style={{ marginTop: '1.5rem', fontSize: '0.75rem', fontFamily: "'JetBrains Mono', monospace", color: 'var(--text-dimmed)' }}>
                                         PASS ID: {ticket.passId}
                                     </p>

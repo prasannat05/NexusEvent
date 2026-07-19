@@ -32,4 +32,11 @@ export const registerForEvent = (eventId) => api.post(`/tickets/register/${event
 export const cancelTicket = (eventId) => api.delete(`/tickets/cancel/${eventId}`);
 export const getMyTickets = () => api.get('/tickets/my');
 
+// -- Organizer Requests --
+export const submitOrganizerRequest = () => api.post('/organizer-requests');
+export const getMyRequestStatus = () => api.get('/organizer-requests/my-status');
+export const getOrganizerRequests = () => api.get('/organizer-requests');
+export const approveRequest = (id) => api.patch(`/organizer-requests/${id}/approve`);
+export const rejectRequest = (id) => api.patch(`/organizer-requests/${id}/reject`);
+
 export default api;

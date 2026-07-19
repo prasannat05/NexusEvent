@@ -82,7 +82,7 @@ export default function OrganizerPage() {
                                 <div className="item-row" key={event._id}>
                                     <div>
                                         <strong style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-intense)' }}>{event.title}</strong>
-                                        <div style={{ fontSize: '0.8rem', color: 'var(--text-dimmed)', marginTop: '0.15rem' }}>👥 Registered: {event.attendees.length}</div>
+                                        <div style={{ fontSize: '0.8rem', color: 'var(--text-dimmed)', marginTop: '0.15rem' }}>Registered: {event.attendees.length}</div>
                                     </div>
                                     <button className="btn btn-danger" style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }} onClick={() => handleDelete(event._id)}>Remove</button>
                                 </div>

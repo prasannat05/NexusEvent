@@ -6,39 +6,31 @@ export default function LoginPage() {
     const { login, signup } = useAuth();
     const navigate = useNavigate();
     const [isSignUp, setIsSignUp] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        student: { email: '', password: '', displayName: '' },
-        organizer: { email: '', password: '', displayName: '' },
-        admin: { email: '', password: '', displayName: '' }
+        email: '',
+        password: '',
+        displayName: ''
     });
 
-    const roles = [
-        { key: 'student', icon: '🎓', title: 'Student Portal', subtitle: 'Browse events, RSVP, and manage your passes', redirect: '/explore' },
-        { key: 'organizer', icon: '🎪', title: 'Club Organizer', subtitle: 'Create events and manage student rosters', redirect: '/organizer' },
-        { key: 'admin', icon: '🛡️', title: 'Campus Admin', subtitle: 'Full oversight of all campus activities', redirect: '/admin' }
-    ];
-
-    const handleChange = (role, field, value) => {
-        setFormData(prev => ({
-            ...prev,
-            [role]: { ...prev[role], [field]: value }
-        }));
-        setErrors(prev => ({ ...prev, [role]: '' }));
+    const handleChange = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+        setError('');
     };
 
-    const handleSubmit = async (e, roleInfo) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = formData[roleInfo.key];
-        setErrors(prev => ({ ...prev, [roleInfo.key]: '' }));
+        setError('');
+        setLoading(true);
 
         try {
             if (isSignUp) {
-                await signup(data.email, data.password, data.displayName || data.email.split('@')[0], roleInfo.key);
+                await signup(formData.email, formData.password, formData.displayName || formData.email.split('@')[0]);
             } else {
-                await login(data.email, data.password);
+                await login(formData.email, formData.password);
             }
-            navigate(roleInfo.redirect);
+            navigate('/explore');
         } catch (err) {
             let msg = 'Authentication failed';
             if (err.code === 'auth/user-not-found') msg = 'No account found. Sign up first!';
@@ -46,7 +38,9 @@ export default function LoginPage() {
             else if (err.code === 'auth/email-already-in-use') msg = 'Email already registered. Sign in instead!';
             else if (err.code === 'auth/weak-password') msg = 'Password must be at least 6 characters';
             else if (err.code === 'auth/invalid-email') msg = 'Invalid email address';
-            setErrors(prev => ({ ...prev, [roleInfo.key]: msg }));
+            setError(msg);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -54,7 +48,7 @@ export default function LoginPage() {
         <div className="login-screen">
             <div className="login-brand">
                 <h1>NexusCampus</h1>
-                <p>Choose your portal to continue</p>
+                <p>Campus Event Management Platform</p>
             </div>
 
             <div className="login-mode-toggle">
@@ -63,44 +57,44 @@ export default function LoginPage() {
             </div>
 
             <div className="login-cards-row">
-                {roles.map((roleInfo) => (
-                    <div className="login-card" key={roleInfo.key}>
-                        <div className={`login-card-icon ${roleInfo.key}`}>{roleInfo.icon}</div>
-                        <h3>{roleInfo.title}</h3>
-                        <p className="login-subtitle">{roleInfo.subtitle}</p>
-                        <form className="login-form" onSubmit={(e) => handleSubmit(e, roleInfo)}>
-                            {isSignUp && (
-                                <input
-                                    type="text"
-                                    className="login-input"
-                                    placeholder="Display Name"
-                                    value={formData[roleInfo.key].displayName}
-                                    onChange={(e) => handleChange(roleInfo.key, 'displayName', e.target.value)}
-                                />
-                            )}
-                            <input
-                                type="email"
-                                className="login-input"
-                                placeholder="Email address"
-                                value={formData[roleInfo.key].email}
-                                onChange={(e) => handleChange(roleInfo.key, 'email', e.target.value)}
-                                required
-                            />
-                            <input
-                                type="password"
-                                className="login-input"
-                                placeholder="Password"
-                                value={formData[roleInfo.key].password}
-                                onChange={(e) => handleChange(roleInfo.key, 'password', e.target.value)}
-                                required
-                            />
-                            <button type="submit" className="login-btn">
-                                {isSignUp ? `Sign Up as ${roleInfo.title.split(' ')[0]}` : `Sign In as ${roleInfo.title.split(' ')[0]}`}
-                            </button>
-                            {errors[roleInfo.key] && <p className="login-error">{errors[roleInfo.key]}</p>}
-                        </form>
+                <div className="login-card">
+                    <div className="login-card-icon-single">
+                        <div className="brand-icon-large">N</div>
                     </div>
-                ))}
+                    <h3>{isSignUp ? 'Create Your Account' : 'Welcome Back'}</h3>
+                    <p className="login-subtitle">{isSignUp ? 'Join the campus community' : 'Sign in to continue'}</p>
+                    <form className="login-form" onSubmit={handleSubmit}>
+                        {isSignUp && (
+                            <input
+                                type="text"
+                                className="login-input"
+                                placeholder="Display Name"
+                                value={formData.displayName}
+                                onChange={(e) => handleChange('displayName', e.target.value)}
+                            />
+                        )}
+                        <input
+                            type="email"
+                            className="login-input"
+                            placeholder="Email address"
+                            value={formData.email}
+                            onChange={(e) => handleChange('email', e.target.value)}
+                            required
+                        />
+                        <input
+                            type="password"
+                            className="login-input"
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={(e) => handleChange('password', e.target.value)}
+                            required
+                        />
+                        <button type="submit" className="login-btn" disabled={loading}>
+                            {loading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}
+                        </button>
+                        {error && <p className="login-error">{error}</p>}
+                    </form>
+                </div>
             </div>
         </div>
     );

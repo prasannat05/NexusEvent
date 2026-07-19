@@ -250,3 +250,27 @@ a.nav-btn { text-decoration: none; }
     .login-card { width: 100%; max-width: 340px; }
     .metrics-row { flex-direction: column; }
 }
+
+/* -- Single Login Card -- */
+.login-card-icon-single { margin-bottom: 0.5rem; }
+.brand-icon-large { width: 56px; height: 56px; background: linear-gradient(135deg, var(--accent), #a78bfa); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #fff; font-weight: 800; letter-spacing: -0.02em; }
+
+/* -- Organizer Request Section -- */
+.organizer-request-section { margin-top: 0.5rem; }
+.btn-request-organizer { width: 100%; padding: 0.7rem 1rem; background: linear-gradient(135deg, #a78bfa, #7c5cfc); color: #fff; border: none; border-radius: var(--radius-element); font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.25s var(--motion-fluid); }
+.btn-request-organizer:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124, 92, 252, 0.3); }
+.btn-request-organizer:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.request-status { padding: 0.6rem 1rem; border-radius: var(--radius-element); font-size: 0.78rem; font-weight: 600; text-align: center; }
+.request-status.pending { background: #fef3c7; color: #92400e; }
+.request-status.approved { background: var(--status-success-bg); color: var(--status-success); }
+.request-status.rejected { background: var(--status-danger-bg); color: var(--status-danger); }
+
+/* -- Status Badges -- */
+.status-badge { padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+.status-pending { background: #fef3c7; color: #92400e; }
+.status-approved { background: var(--status-success-bg); color: var(--status-success); }
+.status-rejected { background: var(--status-danger-bg); color: var(--status-danger); }
+
+/* -- Action Buttons -- */
+.action-btns { display: flex; gap: 0.5rem; }

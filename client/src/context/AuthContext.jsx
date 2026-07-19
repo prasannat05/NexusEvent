@@ -26,7 +26,13 @@ export function AuthProvider({ children }) {
                     const res = await getMe();
                     setUserProfile(res.data);
                 } catch {
-                    setUserProfile(null);
+                    // User not yet registered in MongoDB, register them
+                    try {
+                        const regRes = await registerUser({ displayName: firebaseUser.displayName || firebaseUser.email.split('@')[0] });
+                        setUserProfile(regRes.data.user);
+                    } catch {
+                        setUserProfile(null);
+                    }
                 }
             } else {
                 setUserProfile(null);
@@ -36,11 +42,11 @@ export function AuthProvider({ children }) {
         return unsubscribe;
     }, []);
 
-    const signup = async (email, password, displayName, role) => {
+    const signup = async (email, password, displayName) => {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(cred.user, { displayName });
-        // Register in MongoDB
-        const res = await registerUser({ displayName, role });
+        // Register in MongoDB as student
+        const res = await registerUser({ displayName });
         setUserProfile(res.data.user);
         return cred;
     };
@@ -51,7 +57,13 @@ export function AuthProvider({ children }) {
             const res = await getMe();
             setUserProfile(res.data);
         } catch {
-            setUserProfile(null);
+            // Auto-register if not in DB yet
+            try {
+                const regRes = await registerUser({ displayName: cred.user.displayName || email.split('@')[0] });
+                setUserProfile(regRes.data.user);
+            } catch {
+                setUserProfile(null);
+            }
         }
         return cred;
     };
@@ -61,6 +73,15 @@ export function AuthProvider({ children }) {
         setUserProfile(null);
     };
 
+    const refreshProfile = async () => {
+        try {
+            const res = await getMe();
+            setUserProfile(res.data);
+        } catch {
+            // ignore
+        }
+    };
+
     const value = {
         user,
         userProfile,
@@ -68,6 +89,7 @@ export function AuthProvider({ children }) {
         signup,
         login,
         logout,
+        refreshProfile,
         role: userProfile?.role || 'student'
     };
 

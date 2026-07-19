@@ -6,23 +6,24 @@ const { verifyToken } = require('../middleware/authMiddleware');
 // POST /api/auth/register — Save or update user after Firebase signup/login
 router.post('/register', verifyToken, async (req, res) => {
     try {
-        const { role, displayName } = req.body;
+        const { displayName } = req.body;
         const { uid, email } = req.user;
 
         let user = await User.findOne({ uid });
 
         if (user) {
-            // Update existing user
+            // Update existing user — preserve their current role
             user.displayName = displayName || user.displayName;
-            if (role) user.role = role;
             await user.save();
         } else {
             // Create new user
+            // Auto-detect admin by email; otherwise always default to 'student'
+            const assignedRole = email === 'admin@nexuscampus.com' ? 'admin' : 'student';
             user = await User.create({
                 uid,
                 email,
                 displayName: displayName || email.split('@')[0],
-                role: role || 'student'
+                role: assignedRole
             });
         }
 
